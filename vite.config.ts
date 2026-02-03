@@ -11,6 +11,7 @@ export default defineConfig({
     vue(),
     legacy()
   ],
+  base: '/EchoScape/',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

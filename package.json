@@ -1,5 +1,6 @@
 {
   "name": "echoscape",
+  "homepage": "https://theoldryannewnes.github.io/EchoScape/",
   "private": true,
   "version": "0.0.1",
   "type": "module",
@@ -29,6 +30,7 @@
     "@vitejs/plugin-vue": "^4.0.0",
     "@vue/eslint-config-typescript": "^12.0.0",
     "@vue/test-utils": "^2.3.0",
+    "angular-cli-ghpages": "^3.0.2",
     "cypress": "^13.5.0",
     "eslint": "^8.35.0",
     "eslint-plugin-vue": "^9.9.0",
