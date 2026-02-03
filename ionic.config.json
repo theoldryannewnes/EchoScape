@@ -1,0 +1,7 @@
+{
+  "name": "echoscape",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue-vite"
+}
