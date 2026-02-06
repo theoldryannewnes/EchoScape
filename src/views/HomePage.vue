@@ -30,7 +30,7 @@ const settings = ref<VisualSettings>({
   barCount: 128,
   mode: "line",
   lineWidth: 2,
-  smoothing: 0.8
+  smoothing: 0.9
 });
 
 const settingsOpen = ref<boolean>(false);
@@ -79,7 +79,8 @@ async function startAudio(): Promise<void> {
     audioContext.value.createMediaStreamSource(stream);
 
   analyser.value = audioContext.value.createAnalyser();
-  analyser.value.fftSize = 2048;
+  // analyser.value.fftSize = 2048;
+  analyser.value.fftSize = 1024;
 
   dataArray.value = new Uint8Array(analyser.value.fftSize);
 
@@ -140,52 +141,92 @@ function draw(): void {
     }
 
     ctx.stroke();
-  }
-  if (mode === "bars") {
+  } if (mode === "bars") {
     const bars = settings.value.barCount;
-    const step = Math.floor(dataArray.value.length / bars);
+    const halfBars = Math.floor(bars / 2);
+    const step = Math.floor(dataArray.value.length / halfBars);
+
+    const centerX = canvas.value.width / 2;
     const barWidth = canvas.value.width / bars;
 
-    for (let i = 0; i < bars; i++) {
+    ctx.fillStyle = settings.value.colour;
+
+    for (let i = 0; i < halfBars; i++) {
       const value = dataArray.value[i * step] / 255;
       const barHeight = value * canvas.value.height;
 
-      const x = i * barWidth;
-      const y = canvas.value.height - barHeight;
+      const xRight =
+        centerX + i * barWidth;
+      const xLeft =
+        centerX - (i + 1) * barWidth;
 
-      ctx.fillStyle = settings.value.colour;
-      ctx.fillRect(x, y, barWidth - 1, barHeight);
+      const y =
+        canvas.value.height - barHeight;
+
+      ctx.fillRect(
+        xRight,
+        y,
+        barWidth - 1,
+        barHeight
+      );
+
+      ctx.fillRect(
+        xLeft,
+        y,
+        barWidth - 1,
+        barHeight
+      );
     }
-  }
-  if (mode === "circle") {
+} if (mode === "circle") {
     const cx = canvas.value.width / 2;
     const cy = canvas.value.height / 2;
-    const radius = Math.min(cx, cy) * 0.4;
+    const baseRadius = Math.min(cx, cy) * 0.35;
 
     const bars = settings.value.barCount;
-    const step = Math.floor(dataArray.value.length / bars);
+    const halfBars = Math.floor(bars / 2);
+    const step = Math.floor(dataArray.value.length / halfBars);
 
     ctx.strokeStyle = settings.value.colour;
     ctx.lineWidth = settings.value.lineWidth;
 
-    for (let i = 0; i < bars; i++) {
-      const value = dataArray.value[i * step] / 255;
-      const angle = (i / bars) * Math.PI * 2;
+    for (let i = 0; i < halfBars; i++) {
+        const value = dataArray.value[i * step] / 255;
+        const magnitude = value * baseRadius;
 
-      const innerX = cx + Math.cos(angle) * radius;
-      const innerY = cy + Math.sin(angle) * radius;
+        const angleA = (i / halfBars) * Math.PI;
+        const angleB = angleA + Math.PI;
 
-      const outerX =
-        cx + Math.cos(angle) * (radius + value * radius);
-      const outerY =
-        cy + Math.sin(angle) * (radius + value * radius);
+        const x1 =
+          cx + Math.cos(angleA) * baseRadius;
+        const y1 =
+          cy + Math.sin(angleA) * baseRadius;
 
-      ctx.beginPath();
-      ctx.moveTo(innerX, innerY);
-      ctx.lineTo(outerX, outerY);
-      ctx.stroke();
+        const x2 =
+          cx + Math.cos(angleA) * (baseRadius + magnitude);
+        const y2 =
+          cy + Math.sin(angleA) * (baseRadius + magnitude);
+
+        const x3 =
+          cx + Math.cos(angleB) * baseRadius;
+        const y3 =
+          cy + Math.sin(angleB) * baseRadius;
+
+        const x4 =
+          cx + Math.cos(angleB) * (baseRadius + magnitude);
+        const y4 =
+          cy + Math.sin(angleB) * (baseRadius + magnitude);
+
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(x3, y3);
+        ctx.lineTo(x4, y4);
+        ctx.stroke();
+      }
     }
-  }
 
 }
 </script>

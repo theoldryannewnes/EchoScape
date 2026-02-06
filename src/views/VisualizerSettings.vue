@@ -91,7 +91,15 @@ label {
   margin-bottom: 12px;
 }
 
+.buttons{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .buttons button {
-  margin-right: 8px;
+  margin: 5px;
+  width: 30vw;
+  height: 5vh;
 }
 </style>
