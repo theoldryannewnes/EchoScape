@@ -3,32 +3,11 @@
     class="panel"
     v-show="open"
   >
-    <h3>Visualization Settings</h3>
+    <h3 id="paneltitle">Visualization Settings</h3>
 
     <label>
       Colour
       <input type="color" v-model="local.colour" />
-    </label>
-
-    <label>
-      Bars
-      <input
-        type="range"
-        min="16"
-        max="512"
-        step="16"
-        v-model.number="local.barCount"
-      />
-    </label>
-
-    <label>
-      Line Width
-      <input
-        type="range"
-        min="1"
-        max="10"
-        v-model.number="local.lineWidth"
-      />
     </label>
 
     <label>
@@ -42,10 +21,48 @@
       />
     </label>
 
+    <label v-if="local.mode === 'bars' || local.mode === 'circle'">
+      Bars
+      <input
+        type="range"
+        min="16"
+        max="512"
+        step="16"
+        v-model.number="local.barCount"
+      />
+    </label>
+
+    <label v-if="local.mode === 'line' || local.mode === 'circle'">
+      Line Width
+      <input
+        type="range"
+        min="1"
+        max="10"
+        v-model.number="local.lineWidth"
+      />
+    </label>
+
     <div class="buttons">
-      <button @click="local.mode = 'line'">Line</button>
-      <button @click="local.mode = 'bars'">Bars</button>
-      <button @click="local.mode = 'circle'">Circle</button>
+      <button
+        :class="{ active: local.mode === 'line' }"
+        @click="local.mode = 'line'"
+      >
+        Line
+      </button>
+
+      <button
+        :class="{ active: local.mode === 'bars' }"
+        @click="local.mode = 'bars'"
+      >
+        Bars
+      </button>
+
+      <button
+        :class="{ active: local.mode === 'circle' }"
+        @click="local.mode = 'circle'"
+      >
+        Circle
+      </button>
     </div>
   </div>
 </template>
@@ -77,7 +94,7 @@ watch(
   position: fixed;
   right: 0;
   top: 0;
-  width: 70%;
+  width: 60%;
   height: 100%;
   padding: 16px;
   background: rgba(0, 0, 0, 0.55);
@@ -86,9 +103,15 @@ watch(
   z-index: 10;
 }
 
+#paneltitle{
+  text-align: center;
+}
+
 label {
-  display: block;
-  margin-bottom: 12px;
+  margin-bottom: 15px;
+  display:flex;
+  justify-content: space-evenly;
+  align-items: center;
 }
 
 .buttons{
@@ -101,5 +124,10 @@ label {
   margin: 5px;
   width: 30vw;
   height: 5vh;
+}
+
+button.active {
+  background: #00ff88;
+  color: #000;
 }
 </style>
